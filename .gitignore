@@ -1,0 +1,27 @@
+# General
+.DS_Store
+.vscode/
+*.log
+
+# Environment variables
+.env
+
+# Python (Backend)
+backend/.venv/
+backend/__pycache__/
+backend/*.py[oc]
+backend/build/
+backend/dist/
+backend/wheels/
+backend/*.egg-info
+
+# Node (Frontend)
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
