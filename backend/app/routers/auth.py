@@ -16,9 +16,9 @@ async def callback(request: Request, code: str):
     try:
         spotify.authenticate_user(code)
         # Successful login, redirect to frontend dashboard
-        # Use FRONTEND_URL env var if available, else localhost
+        # Use FRONTEND_URL env var if available, else production URL
         import os
-        frontend_url = os.getenv("FRONTEND_URL", "http://127.0.0.1:5173")
+        frontend_url = os.getenv("FRONTEND_URL", "https://mixweaver.netlify.app")
         return RedirectResponse(url=f"{frontend_url}/dashboard")
     except Exception as e:
         return {"error": str(e)}

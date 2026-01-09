@@ -21,6 +21,7 @@ app.add_middleware(
     allow_origins=[
         "http://127.0.0.1:5173", 
         "http://localhost:5173",
+        "https://mixweaver.netlify.app",
         os.getenv("FRONTEND_URL", "*") # Allow production URL
     ], 
     allow_credentials=True,
