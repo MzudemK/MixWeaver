@@ -13,7 +13,10 @@ app = FastAPI(title="Spotify Tool Backend")
 
 app.add_middleware(
     SessionMiddleware, 
-    secret_key=os.getenv("SESSION_SECRET_KEY", "supersecretkey")) # Fallback added for dev
+    secret_key=os.getenv("SESSION_SECRET_KEY", "supersecretkey"),
+    same_site="none",
+    https_only=True
+) 
 
 app.add_middleware(
     CORSMiddleware,
