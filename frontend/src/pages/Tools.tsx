@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -24,7 +24,7 @@ export const Tools = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // Fetch playlists and user ID when needed
   useEffect(() => {
@@ -44,7 +44,7 @@ export const Tools = () => {
             .then(data => {
                 if (Array.isArray(data)) {
                     // Filter playlists owned by the user
-                    const ownedPlaylists = data.filter((p: any) => p.owner.id === userId || (userId && p.owner.id === userId));
+                    // const ownedPlaylists = data.filter((p: any) => p.owner.id === userId || (userId && p.owner.id === userId));
                     setPlaylists(data); 
                 }
             })
@@ -70,7 +70,7 @@ export const Tools = () => {
               body = { playlist_id: selectedPlaylist, method: sortMethod, order: sortOrder };
           } else if (action === 'create_billboard') {
               url = '/api/billboard/create';
-              const formattedDate = billboardDate?.toISOString().split('T')[0]; // YYYY-MM-DD
+              const formattedDate = billboardDate ? billboardDate.toISOString().split('T')[0] : ''; // YYYY-MM-DD
               body = { date: formattedDate, name: billboardName, description: billboardDesc };
           }
 
@@ -306,7 +306,7 @@ export const Tools = () => {
                     <div className="date-picker-wrapper">
                       <DatePicker 
                           selected={billboardDate} 
-                          onChange={(date) => setBillboardDate(date)}
+                          onChange={(date: Date | null) => setBillboardDate(date)}
                           dateFormat="yyyy-MM-dd"
                           maxDate={new Date()}
                           showYearDropdown
