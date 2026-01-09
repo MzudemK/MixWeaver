@@ -14,7 +14,8 @@ app = FastAPI(title="Spotify Tool Backend")
 app.add_middleware(
     SessionMiddleware, 
     secret_key=os.getenv("SESSION_SECRET_KEY", "supersecretkey"),
-    same_site="none",
+    max_age=3600,  # 1 hour
+    same_site="lax", 
     https_only=True
 ) 
 
