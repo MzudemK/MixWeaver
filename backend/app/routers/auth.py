@@ -16,8 +16,10 @@ async def callback(request: Request, code: str):
     try:
         spotify.authenticate_user(code)
         # Successful login, redirect to frontend dashboard
-        # Frontend running on 127.0.0.1:5173
-        return RedirectResponse(url="http://127.0.0.1:5173/dashboard")
+        # Use FRONTEND_URL env var if available, else localhost
+        import os
+        frontend_url = os.getenv("FRONTEND_URL", "http://127.0.0.1:5173")
+        return RedirectResponse(url=f"{frontend_url}/dashboard")
     except Exception as e:
         return {"error": str(e)}
 
