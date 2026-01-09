@@ -32,3 +32,7 @@ app.include_router(auth.router)
 app.include_router(playlists.router)
 app.include_router(billboard.router)
 app.include_router(stats.router)
+
+@app.get("/")
+async def root():
+    return {"status": "online", "message": "MixWeaver Backend is running"}
