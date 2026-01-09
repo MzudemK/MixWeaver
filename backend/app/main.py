@@ -40,4 +40,11 @@ app.include_router(stats.router)
 
 @app.get("/")
 async def root():
-    return {"status": "online", "message": "MixWeaver Backend is running"}
+    return {
+        "status": "online", 
+        "message": "MixWeaver Backend is running",
+        "debug_info": {
+            "redirect_uri": os.getenv("REDIRECT_URI", "NOT_SET"),
+            "frontend_url": os.getenv("FRONTEND_URL", "NOT_SET")
+        }
+    }
