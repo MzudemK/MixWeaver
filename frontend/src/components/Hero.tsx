@@ -1,22 +1,39 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { LoadingSpinner } from './LoadingSpinner';
 
 export const Hero = () => {
   const navigate = useNavigate();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const handleLogin = async () => {
+    setIsLoggingIn(true);
     try {
       const res = await fetch('/api/auth/login');
+      // Check if response is JSON (proxy might return HTML on 404/500 if misconfigured)
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server response was not JSON");
+      }
+      
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        setIsLoggingIn(false);
       }
     } catch (err) {
       console.error("Login failed", err);
+      setIsLoggingIn(false);
+      alert("Could not connect to server. Please try again later.");
     }
   };
 
   return (
     <section className="relative overflow-hidden px-6 py-32 md:py-48 text-center font-sans">
+      {/* Full screen loader when logging in */}
+      {isLoggingIn && <LoadingSpinner fullScreen message="Connecting to Spotify..." />}
+
       {/* Dynamic Background Glow - Etwas größer und weicher für mehr Tiefe */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-brand/10 blur-[130px] rounded-full -z-10"></div>
       
