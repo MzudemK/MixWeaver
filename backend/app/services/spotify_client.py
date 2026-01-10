@@ -46,7 +46,7 @@ class SpotifyService:
         return playlists["items"]
     
     def create_new_playlist(self, name: str, description: str = ""):
-        """Erstell eine neue Playlist für den Nutzer, wird für Billboard Hot 100 verwendet"""
+        """Erstell eine neue Playlist für den Nutzer"""
         sp = self._get_client()
         user = sp.current_user()
         return sp.user_playlist_create(user['id'], name, description=description)
