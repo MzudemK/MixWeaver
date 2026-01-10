@@ -1,17 +1,18 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
-import { Home } from './pages/Home';
-import { Dashboard } from './pages/Dashboard';
-import { Features } from './pages/Features'; // Keep for public view if needed, or redirect
-import { Tools } from './pages/Tools';
-import { Library } from './pages/Library';
-import { About } from './pages/About';
-import { Stats } from './pages/Stats';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import type { UserData } from './types';
-
 import { LoadingSpinner } from './components/LoadingSpinner';
+
+// Lazy load pages for performance optimization
+const Home = lazy(() => import('./pages/Home').then(module => ({ default: module.Home })));
+const Dashboard = lazy(() => import('./pages/Dashboard').then(module => ({ default: module.Dashboard })));
+const Features = lazy(() => import('./pages/Features').then(module => ({ default: module.Features })));
+const Tools = lazy(() => import('./pages/Tools').then(module => ({ default: module.Tools })));
+const Library = lazy(() => import('./pages/Library').then(module => ({ default: module.Library })));
+const About = lazy(() => import('./pages/About').then(module => ({ default: module.About })));
+const Stats = lazy(() => import('./pages/Stats').then(module => ({ default: module.Stats })));
 
 // Wrapper component to check auth status and pass to Navbar
 const AppContent = () => {
@@ -51,15 +52,17 @@ const AppContent = () => {
     <div className='min-h-screen bg-obsidian selection:bg-amber-brand/30 selection:text-amber-glow'>
       <Navbar userData={userData} />
       <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/tools" element={<Tools />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/stats" element={<Stats />} />
-        </Routes>
+        <Suspense fallback={<LoadingSpinner fullScreen message="Loading..." />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/tools" element={<Tools />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/stats" element={<Stats />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   );

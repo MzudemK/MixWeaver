@@ -325,10 +325,11 @@ export const Tools = () => {
                           onChange={(date: Date | null) => setBillboardDate(date)}
                           dateFormat="yyyy-MM-dd"
                           maxDate={new Date()}
+                          minDate={new Date('1958-08-04')}
                           showYearDropdown
                           scrollableYearDropdown
-                          yearDropdownItemNumber={60}
-                          placeholderText="SELECT DATE (YYYY-MM-DD)"
+                          yearDropdownItemNumber={100}
+                          placeholderText="SELECT DATE (SINCE 1958-08-04)"
                           className="w-full p-3 bg-obsidian rounded-lg border border-obsidian-muted text-platinum focus:outline-none focus:border-amber-brand"
                       />
                     </div>
