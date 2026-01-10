@@ -7,7 +7,7 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
-from .routers import playlists, auth, stats
+from .routers import billboard, playlists, auth, stats
 
 app = FastAPI(title="Spotify Tool Backend")
 
@@ -36,6 +36,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(playlists.router)
+app.include_router(billboard.router)
 app.include_router(stats.router)
 
 @app.get("/")

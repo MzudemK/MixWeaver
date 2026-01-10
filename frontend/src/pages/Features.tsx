@@ -33,6 +33,19 @@ export const Features = () => {
           </p>
         </div>
 
+        {/* Feature 3: Billboard Time Machine */}
+        <div className="p-8 bg-obsidian-soft rounded-2xl border border-obsidian-muted hover:border-amber-brand/50 transition-all group">
+           <div className="w-14 h-14 bg-amber-brand/10 rounded-xl flex items-center justify-center text-amber-brand mb-6 group-hover:scale-110 transition-transform">
+             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-platinum mb-4 group-hover:text-amber-brand transition-colors">Billboard Time Machine</h2>
+          <p className="text-platinum-dim leading-relaxed">
+            Travel back in time. Enter any date (e.g., your birthday or a special anniversary), and MixWeaver will scrape the <strong>Billboard Hot 100</strong> from that week and build a Spotify playlist for you instantly.
+          </p>
+        </div>
+
         {/* Feature 4: Stats */}
         <div className="p-8 bg-obsidian-soft rounded-2xl border border-obsidian-muted hover:border-amber-brand/50 transition-all group">
            <div className="w-14 h-14 bg-amber-brand/10 rounded-xl flex items-center justify-center text-amber-brand mb-6 group-hover:scale-110 transition-transform">

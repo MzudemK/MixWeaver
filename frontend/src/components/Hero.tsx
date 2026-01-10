@@ -71,7 +71,6 @@ export const Hero = () => {
           </button>
         </div>
 
-        {/* Kleiner visueller Hinweis zum Weitermachen */}
       </div>
     </section>
   );
