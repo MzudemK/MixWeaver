@@ -72,11 +72,6 @@ export const Hero = () => {
         </div>
 
         {/* Kleiner visueller Hinweis zum Weitermachen */}
-        <div className="mt-20 animate-bounce opacity-30">
-          <svg className="w-6 h-6 mx-auto text-platinum" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7-7-7" />
-          </svg>
-        </div>
       </div>
     </section>
   );
