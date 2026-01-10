@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 from typing import Optional
@@ -12,7 +13,7 @@ class BillboardRequest(BaseModel):
     description: Optional[str] = None
 
 @router.post("/create")
-async def create_billboard_playlist(request: Request, payload: BillboardRequest):
+def create_billboard_playlist(request: Request, payload: BillboardRequest):
     spotify = SpotifyService(request.session)
     if not spotify.handler.get_cached_token():
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -38,20 +39,23 @@ async def create_billboard_playlist(request: Request, payload: BillboardRequest)
     )
     
     # 3. Search and Add Songs
-    track_uris = []
     sp_client = spotify._get_client()
     
-    # Optimizable: Could use asyncio.gather for parallel search if speed is an issue, 
-    # but sequential is safer for rate limits initially.
-    for song in song_names:
-        # Search for track
-        results = sp_client.search(q=song, type="track", limit=1)
+    def search_song(song):
         try:
+            results = sp_client.search(q=song, type="track", limit=1)
             items = results['tracks']['items']
             if items:
-                track_uris.append(items[0]['uri'])
+                return items[0]['uri']
         except (KeyError, IndexError):
-            continue
+            pass
+        return None
+
+    # Parallelize search to avoid timeouts (limit 10 threads)
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        results = executor.map(search_song, song_names)
+    
+    track_uris = [uri for uri in results if uri]
             
     if track_uris:
         # Add in batches of 100 if needed (spotipy handles this usually, but good to be safe)

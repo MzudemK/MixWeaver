@@ -14,14 +14,14 @@ class ShuffleRequest(BaseModel):
     playlist_id: str
 
 @router.get("/all")
-async def get_all(request: Request):
+def get_all(request: Request):
     spotify = SpotifyService(request.session)
     if not spotify.handler.get_cached_token():
          raise HTTPException(status_code=401, detail="Not authenticated")
     return spotify.get_user_playlist()
 
 @router.post("/shuffle")
-async def shuffle_playlist(request: Request, payload: ShuffleRequest):
+def shuffle_playlist(request: Request, payload: ShuffleRequest):
     spotify = SpotifyService(request.session)
     if not spotify.handler.get_cached_token():
          raise HTTPException(status_code=401, detail="Not authenticated")
@@ -31,7 +31,7 @@ async def shuffle_playlist(request: Request, payload: ShuffleRequest):
     return {"success": success, "message": "Playlist shuffled successfully"}
 
 @router.post("/sort")
-async def sort_playlist(request: Request, payload: SortRequest):
+def sort_playlist(request: Request, payload: SortRequest):
     spotify = SpotifyService(request.session)
     if not spotify.handler.get_cached_token():
          raise HTTPException(status_code=401, detail="Not authenticated")
