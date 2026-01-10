@@ -15,7 +15,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ message = "Loadi
       }, 3000);
 
       const timer2 = setTimeout(() => {
-        setDisplayMessage(prev => prev === "Still connecting..." ? "Waking up the server (this may take up to 50s)..." : prev);
+        setDisplayMessage(prev => prev === "Still connecting..." ? "Waking up the server (this may take up to 60 seconds)..." : prev);
       }, 8000);
 
       return () => {
