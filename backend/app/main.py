@@ -16,7 +16,8 @@ app.add_middleware(
     secret_key=os.getenv("SESSION_SECRET_KEY", "supersecretkey"),
     max_age=3600,  # 1 hour
     same_site="lax", 
-    https_only=True
+    https_only=True,
+    session_cookie="session" # Explicit name
 ) 
 
 app.add_middleware(

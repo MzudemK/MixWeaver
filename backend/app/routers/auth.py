@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
 from ..services.spotify_client import SpotifyService
@@ -8,7 +9,12 @@ router = APIRouter(prefix="/api/auth", tags=["Auth"])
 @router.get("/login")
 async def login(request: Request):
     spotify = SpotifyService(request.session)
-    return {"url": spotify.get_auth_url()}
+    auth_url = spotify.get_auth_url()
+    # Debug info included in response (check Network tab in browser)
+    return {
+        "url": auth_url,
+        "debug_redirect_uri_used": spotify.auth_manager.redirect_uri
+    }
 
 @router.get("/callback")
 async def callback(request: Request, code: str):
@@ -17,7 +23,6 @@ async def callback(request: Request, code: str):
         spotify.authenticate_user(code)
         # Successful login, redirect to frontend dashboard
         # Use FRONTEND_URL env var if available, else production URL
-        import os
         frontend_url = os.getenv("FRONTEND_URL", "https://mixweaver.netlify.app")
         return RedirectResponse(url=f"{frontend_url}/dashboard")
     except Exception as e:

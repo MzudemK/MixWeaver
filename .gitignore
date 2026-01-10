@@ -6,6 +6,9 @@
 # Environment variables
 .env
 
+# Optimization tasks
+optimization.txt
+
 # Python (Backend)
 backend/.venv/
 backend/__pycache__/
