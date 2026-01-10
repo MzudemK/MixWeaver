@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
 import { LoadingSpinner } from '../components/LoadingSpinner';
 
-type ToolMode = 'overview' | 'shuffle' | 'sort' | 'billboard';
+type ToolMode = 'overview' | 'shuffle' | 'sort';
 
 interface Playlist {
     id: string;
@@ -17,9 +15,6 @@ export const Tools = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [userId, setUserId] = useState<string>('');
   const [selectedPlaylist, setSelectedPlaylist] = useState<string>('');
-  const [billboardDate, setBillboardDate] = useState<Date | null>(null);
-  const [billboardName, setBillboardName] = useState('');
-  const [billboardDesc, setBillboardDesc] = useState('');
   const [selectedSortMethod, setSelectedSortMethod] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -51,7 +46,7 @@ export const Tools = () => {
   // Filtered playlists for selection
   const userPlaylists = playlists.filter(p => p.owner?.id === userId);
 
-  const handleAction = async (action: 'shuffle' | 'sort' | 'create_billboard', sortMethod?: string, sortOrder: 'asc' | 'desc' = 'asc') => {
+  const handleAction = async (action: 'shuffle' | 'sort', sortMethod?: string, sortOrder: 'asc' | 'desc' = 'asc') => {
       setLoading(true);
       setMessage('');
       try {
@@ -64,19 +59,6 @@ export const Tools = () => {
           } else if (action === 'sort') {
               url = '/api/playlists/sort';
               body = { playlist_id: selectedPlaylist, method: sortMethod, order: sortOrder };
-          } else if (action === 'create_billboard') {
-              url = '/api/billboard/create';
-              
-              // Fix for timezone issues: format as YYYY-MM-DD using local time
-              let formattedDate = '';
-              if (billboardDate) {
-                  const year = billboardDate.getFullYear();
-                  const month = String(billboardDate.getMonth() + 1).padStart(2, '0');
-                  const day = String(billboardDate.getDate()).padStart(2, '0');
-                  formattedDate = `${year}-${month}-${day}`;
-              }
-              
-              body = { date: formattedDate, name: billboardName, description: billboardDesc };
           }
 
           const res = await fetch(url, {
@@ -95,11 +77,6 @@ export const Tools = () => {
           setMessage(data.message || 'Success!');
           
           // Reset after success
-          if (action === 'create_billboard') {
-              setBillboardDate(null);
-              setBillboardName('');
-              setBillboardDesc('');
-          }
           if (action === 'sort') {
               setSelectedSortMethod(null);
           }
@@ -113,7 +90,7 @@ export const Tools = () => {
   };
 
   const renderOverview = () => (
-    <div className="grid md:grid-cols-3 gap-6">
+    <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
       <div 
         onClick={() => setMode('shuffle')}
         className="p-8 bg-obsidian-soft rounded-xl border border-obsidian-muted hover:border-amber-brand/50 hover:bg-obsidian-soft/80 transition-all cursor-pointer group text-center"
@@ -138,19 +115,6 @@ export const Tools = () => {
         </div>
         <h2 className="text-2xl font-bold text-platinum mb-2 group-hover:text-amber-brand">Smart Sort</h2>
         <p className="text-platinum-dim">Sort by Genre, BPM, Key, or Alphabetically.</p>
-      </div>
-
-      <div 
-        onClick={() => setMode('billboard')}
-        className="p-8 bg-obsidian-soft rounded-xl border border-obsidian-muted hover:border-amber-brand/50 hover:bg-obsidian-soft/80 transition-all cursor-pointer group text-center"
-      >
-         <div className="w-16 h-16 mx-auto mb-6 bg-amber-brand/10 rounded-full flex items-center justify-center text-amber-brand">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-            </svg>
-        </div>
-        <h2 className="text-2xl font-bold text-platinum mb-2 group-hover:text-amber-brand">Billboard Time Machine</h2>
-        <p className="text-platinum-dim">Create a playlist from the Billboard Hot 100 of any past date.</p>
       </div>
     </div>
   );
@@ -188,7 +152,6 @@ export const Tools = () => {
             {mode === 'overview' && 'Tools'}
             {mode === 'shuffle' && 'Randomize Order'}
             {mode === 'sort' && 'Smart Sorting'}
-            {mode === 'billboard' && 'Billboard Time Machine'}
         </h1>
       </div>
       </div>
@@ -201,7 +164,7 @@ export const Tools = () => {
 
       {mode === 'overview' && renderOverview()}
       
-      {loading && mode !== 'overview' && <LoadingSpinner message={mode === 'billboard' ? "Creating your playlist in process..." : "Processing your mix..."} />}
+      {loading && mode !== 'overview' && <LoadingSpinner message="Processing your mix..." />}
 
       {mode === 'shuffle' && !loading && (
         <div className="max-w-2xl mx-auto bg-obsidian-soft p-8 rounded-xl border border-obsidian-muted">
@@ -309,59 +272,6 @@ export const Tools = () => {
                     </div>
                 )}
             </div>
-        </div>
-      )}
-
-      {mode === 'billboard' && !loading && (
-        <div className="max-w-2xl mx-auto bg-obsidian-soft p-8 rounded-xl border border-obsidian-muted">
-             <h3 className="text-xl font-bold mb-4">Create Playlist from Chart</h3>
-             
-             <div className="space-y-4 mb-6">
-                <div>
-                    <label className="block text-sm text-platinum-dim mb-2 uppercase tracking-wide">Target Date</label>
-                    <div className="date-picker-wrapper">
-                      <DatePicker 
-                          selected={billboardDate} 
-                          onChange={(date: Date | null) => setBillboardDate(date)}
-                          dateFormat="yyyy-MM-dd"
-                          maxDate={new Date()}
-                          showYearDropdown
-                          scrollableYearDropdown
-                          yearDropdownItemNumber={60}
-                          placeholderText="SELECT DATE (YYYY-MM-DD)"
-                          className="w-full p-3 bg-obsidian rounded-lg border border-obsidian-muted text-platinum focus:outline-none focus:border-amber-brand"
-                      />
-                    </div>
-                </div>
-                <div>
-                    <label className="block text-sm text-platinum-dim mb-2 uppercase tracking-wide">Playlist Name</label>
-                    <input 
-                        type="text" 
-                        placeholder="E.G. SUMMER OF '69"
-                        value={billboardName}
-                        onChange={(e) => setBillboardName(e.target.value)}
-                        className="w-full p-3 bg-obsidian rounded-lg border border-obsidian-muted text-platinum placeholder:text-obsidian-muted focus:outline-none focus:border-amber-brand"
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm text-platinum-dim mb-2 uppercase tracking-wide">Description (Optional)</label>
-                    <textarea 
-                        rows={3}
-                        placeholder="ENTER PLAYLIST DESCRIPTION..."
-                        value={billboardDesc}
-                        onChange={(e) => setBillboardDesc(e.target.value)}
-                        className="w-full p-3 bg-obsidian rounded-lg border border-obsidian-muted text-platinum placeholder:text-obsidian-muted focus:outline-none focus:border-amber-brand"
-                    />
-                </div>
-             </div>
-
-             <button 
-                onClick={() => handleAction('create_billboard')}
-                disabled={!billboardDate || !billboardName || loading}
-                className="w-full bg-amber-brand hover:bg-amber-glow text-obsidian font-bold py-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase"
-             >
-                 Create Playlist
-             </button>
         </div>
       )}
     </div>
