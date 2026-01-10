@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -24,8 +24,6 @@ export const Tools = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   
-  // const navigate = useNavigate();
-
   // Fetch playlists and user ID when needed
   useEffect(() => {
       if (mode === 'shuffle' || mode === 'sort') {
@@ -43,8 +41,6 @@ export const Tools = () => {
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {
-                    // Filter playlists owned by the user
-                    // const ownedPlaylists = data.filter((p: any) => p.owner.id === userId || (userId && p.owner.id === userId));
                     setPlaylists(data); 
                 }
             })
@@ -70,7 +66,16 @@ export const Tools = () => {
               body = { playlist_id: selectedPlaylist, method: sortMethod, order: sortOrder };
           } else if (action === 'create_billboard') {
               url = '/api/billboard/create';
-              const formattedDate = billboardDate ? billboardDate.toISOString().split('T')[0] : ''; // YYYY-MM-DD
+              
+              // Fix for timezone issues: format as YYYY-MM-DD using local time
+              let formattedDate = '';
+              if (billboardDate) {
+                  const year = billboardDate.getFullYear();
+                  const month = String(billboardDate.getMonth() + 1).padStart(2, '0');
+                  const day = String(billboardDate.getDate()).padStart(2, '0');
+                  formattedDate = `${year}-${month}-${day}`;
+              }
+              
               body = { date: formattedDate, name: billboardName, description: billboardDesc };
           }
 
@@ -152,7 +157,17 @@ export const Tools = () => {
 
   return (
     <div className="pt-32 px-6 max-w-7xl mx-auto text-platinum">
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex flex-col mb-8">
+        {mode === 'overview' && (
+            <Link to="/dashboard" className="text-platinum-dim hover:text-amber-brand flex items-center gap-2 mb-4 transition-colors group w-fit">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Dashboard
+            </Link>
+        )}
+
+      <div className="flex items-center gap-4">
         {mode !== 'overview' && (
             <button 
                 onClick={() => { 
@@ -176,6 +191,7 @@ export const Tools = () => {
             {mode === 'billboard' && 'Billboard Time Machine'}
         </h1>
       </div>
+      </div>
 
       {message && (
           <div className={`p-4 mb-6 rounded-lg ${message.includes('Error') ? 'bg-red-500/20 text-red-200' : 'bg-green-500/20 text-green-200'}`}>
@@ -185,7 +201,7 @@ export const Tools = () => {
 
       {mode === 'overview' && renderOverview()}
       
-      {loading && mode !== 'overview' && <LoadingSpinner message="Processing your mix..." />}
+      {loading && mode !== 'overview' && <LoadingSpinner message={mode === 'billboard' ? "Creating your playlist in process..." : "Processing your mix..."} />}
 
       {mode === 'shuffle' && !loading && (
         <div className="max-w-2xl mx-auto bg-obsidian-soft p-8 rounded-xl border border-obsidian-muted">

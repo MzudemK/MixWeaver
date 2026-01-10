@@ -11,6 +11,7 @@ interface NavbarProps {
 export const Navbar = ({ userData }: NavbarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogin = async () => {
     setIsLoggingIn(true);
@@ -79,8 +80,42 @@ export const Navbar = ({ userData }: NavbarProps) => {
           )}
         </div>
 
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+            <div className="md:hidden absolute top-20 left-0 w-full bg-obsidian-soft border-b border-obsidian-muted shadow-xl py-6 px-6 flex flex-col gap-4 animate-in slide-in-from-top-5 z-40">
+                 {!isLoggedIn ? (
+                    <>
+                      <Link to="/features" onClick={() => setIsMobileMenuOpen(false)} className="text-platinum text-lg font-medium hover:text-amber-brand py-2 border-b border-obsidian-muted/30">Features</Link>
+                      <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-platinum text-lg font-medium hover:text-amber-brand py-2 border-b border-obsidian-muted/30">About</Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="text-platinum text-lg font-medium hover:text-amber-brand py-2 border-b border-obsidian-muted/30">Home</Link>
+                      <Link to="/library" onClick={() => setIsMobileMenuOpen(false)} className="text-platinum text-lg font-medium hover:text-amber-brand py-2 border-b border-obsidian-muted/30">My Library</Link>
+                      <Link to="/tools" onClick={() => setIsMobileMenuOpen(false)} className="text-platinum text-lg font-medium hover:text-amber-brand py-2 border-b border-obsidian-muted/30">Tools</Link>
+                      <Link to="/stats" onClick={() => setIsMobileMenuOpen(false)} className="text-platinum text-lg font-medium hover:text-amber-brand py-2 border-b border-obsidian-muted/30">Stats</Link>
+                    </>
+                  )}
+            </div>
+        )}
+
         {/* Action Button - Ändert sich je nach Status */}
         <div className="flex items-center gap-4">
+          
+          {/* Mobile Menu Toggle */}
+          <button 
+              className="md:hidden text-platinum p-1 hover:text-amber-brand transition-colors"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                 ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                 )}
+              </svg>
+          </button>
+
           {!isLoggedIn ? (
             <button 
               onClick={handleLogin}

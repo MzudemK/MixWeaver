@@ -9,21 +9,20 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ message = "Loadi
   const [displayMessage, setDisplayMessage] = useState(message);
 
   useEffect(() => {
-    // Only update message if it's the default "Loading..." or a specific loading message
-    // We don't want to override custom context-specific messages unless intended
-    const timer1 = setTimeout(() => {
-      setDisplayMessage(prev => prev === message ? "Still connecting..." : prev);
-    }, 3000);
+    if (message === "Loading..." || message === "Still connecting...") {
+      const timer1 = setTimeout(() => {
+        setDisplayMessage(prev => prev === "Loading..." ? "Still connecting..." : prev);
+      }, 3000);
 
-    const timer2 = setTimeout(() => {
-        // Only show this message if we are likely hitting a cold start (waiting > 8s)
-      setDisplayMessage(prev => prev === "Still connecting..." || prev === message ? "Waking up the server (this may take up to 50s on the free plan)..." : prev);
-    }, 8000);
+      const timer2 = setTimeout(() => {
+        setDisplayMessage(prev => prev === "Still connecting..." ? "Waking up the server (this may take up to 50s)..." : prev);
+      }, 8000);
 
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }
   }, [message]);
 
   const content = (
